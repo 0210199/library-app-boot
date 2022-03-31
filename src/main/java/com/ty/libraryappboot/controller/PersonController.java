@@ -13,32 +13,67 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ty.libraryappboot.dao.ResponseStructure;
 import com.ty.libraryappboot.dto.Person;
 import com.ty.libraryappboot.service.PersonService;
+
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 @RestController
 public class PersonController {
 	@Autowired
 	private PersonService personService;
+	@ApiOperation(value="Save Person Details",produces="application/json",consumes="application/json")
+	@ApiResponses({
+	@ApiResponse(code=405,message="Bad Request,Not Proper Person Data"),
+	@ApiResponse(code=200,message="Person Saved")
+	})
 	@PostMapping("/person")
-	public Person savePerson(@RequestBody @Valid Person person) {
+	public ResponseStructure<Person> savePerson(@RequestBody @Valid Person person) {
 
 		return personService.savePerson(person);
 	}
+	
+	@ApiOperation(value = "Update Person Details By Giving Id", produces = "application/json", consumes = "application/json")
+	@ApiResponses({
+
+			@ApiResponse(code = 405, message = "Given PersonId Not Found"),
+			@ApiResponse(code = 200, message = "Updated Given Person Data") })
 	@PutMapping("/person")
-	public Person updatePerson(@RequestParam int uid, @RequestBody Person person) {
+	public ResponseStructure<Person> updatePerson(@RequestParam int uid, @RequestBody Person person) {
 		return personService.UpdatePersonById(uid, person);
 	}
+	
+	@ApiOperation(value = "Get FoodOrder details by id", produces = "application/json", consumes = "application/json")
+	@ApiResponses({
+
+			@ApiResponse(code = 405, message = "Given PersonId Not Found"),
+			@ApiResponse(code = 200, message = "Getting.. Given Person Data") })
 	@GetMapping("/person")
-	public Person getPersonById(@RequestParam int uid) {
+	public ResponseStructure<Person> getPersonById(@RequestParam int uid) {
 		return personService.getPersonById(uid);
 	}
+	
+	@ApiOperation(value = "Gets All Person", produces = "application/json", consumes = "application/json")
+	@ApiResponses({
+
+			@ApiResponse(code = 405, message = "Person Not Found"),
+			@ApiResponse(code = 200, message = "Getting.. All Persons") })
 	@GetMapping("/getallPerson")
-	public List<Person> getallPerson() {
+	public ResponseStructure<List<Person>> getallPerson() {
 		return personService.getAllPerson();
 	}
+	
+	@ApiOperation(value = "Delete Person Details By Id", produces = "application/json", consumes = "application/json")
+	@ApiResponses({
+
+			@ApiResponse(code = 405, message = "Given Person Not Found"),
+			@ApiResponse(code = 200, message = "Deleted Given Person Data") })
+
 	@DeleteMapping("/person")
-	public void deletePerson(@RequestParam int uid) {
-		personService.deletePersonById(uid);
+	public ResponseStructure<Boolean> deletePerson(@RequestParam int uid) {
+		return personService.deletePersonById(uid);
 	}
 	
 	
